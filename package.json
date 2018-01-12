@@ -1,0 +1,32 @@
+{
+  "name": "transfer",
+  "version": "1.0.0",
+  "description": "vr database interaction",
+  "main": "./src/index.js",
+  "dependencies": {
+    "copy-webpack-plugin": "^4.3.1",
+    "elm-webpack-loader": "^4.4.0",
+    "localforage": "^1.5.5",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.10.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"100% coverage!\" && exit 0",
+    "watch": "webpack-dev-server --hot",
+    "build": "webpack -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronanyeah/transfer.git"
+  },
+  "keywords": [
+    "webvr"
+  ],
+  "author": "ronanyeah",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ronanyeah/transfer/issues"
+  },
+  "homepage": "https://github.com/ronanyeah/transfer#readme"
+}
