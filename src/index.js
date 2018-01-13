@@ -35,5 +35,13 @@ const Elm = require("./Main.elm");
       )
     );
 
-  Elm.Main.fullscreen({ db1: data1, db2: data2 });
+  const app = Elm.Main.fullscreen();
+
+  app.ports.db1Data.send(data1);
+
+  app.ports.db2Data.send(data2);
+
+  app.ports.moveToDb1.subscribe(console.log);
+
+  app.ports.moveToDb2.subscribe(console.log);
 })().catch(console.error);
