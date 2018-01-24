@@ -8,18 +8,10 @@ const db2 = lf.createInstance({
   name: "db-2"
 });
 
-db1.setItem("1515723149524", { name: "rupert", age: 25 });
-db1.setItem("1515723350280", { name: "david", age: 12 });
-db1.setItem("1515723358727", { name: "donnie", age: 42 });
-
-db2.setItem("1515723158555", { name: "maisie", age: 32 });
-db2.setItem("1515723383304", { name: "sarah", age: 91 });
-db2.setItem("1515723406866", { name: "laura", age: 14 });
-
 const Elm = require("./Main.elm");
 
-(async () => {
-  const data1 = await db1
+const getDb1 = () =>
+  db1
     .keys()
     .then(keys =>
       Promise.all(
@@ -27,7 +19,8 @@ const Elm = require("./Main.elm");
       )
     );
 
-  const data2 = await db2
+const getDb2 = () =>
+  db2
     .keys()
     .then(keys =>
       Promise.all(
@@ -35,13 +28,46 @@ const Elm = require("./Main.elm");
       )
     );
 
+(async () => {
+  await db1.clear();
+  await db2.clear();
+
+  await db1.setItem("1515723149524", { name: "rupert", age: 25 });
+  await db1.setItem("1515723350280", { name: "david", age: 12 });
+  await db1.setItem("1515723358727", { name: "donnie", age: 42 });
+
+  await db2.setItem("1515723158555", { name: "maisie", age: 32 });
+  await db2.setItem("1515723383304", { name: "sarah", age: 91 });
+  await db2.setItem("1515723406866", { name: "laura", age: 14 });
+
   const app = Elm.Main.fullscreen();
 
-  app.ports.db1Data.send(data1);
+  app.ports.db1Data.send(await getDb1());
+  app.ports.db2Data.send(await getDb2());
 
-  app.ports.db2Data.send(data2);
+  app.ports.moveToDb1.subscribe(async id => {
+    const person = await db2.getItem(id);
 
-  app.ports.moveToDb1.subscribe(console.log);
+    if (!person) return;
 
-  app.ports.moveToDb2.subscribe(console.log);
+    await db2.removeItem(id);
+
+    await db1.setItem(id, person);
+
+    app.ports.db1Data.send(await getDb1());
+    app.ports.db2Data.send(await getDb2());
+  });
+
+  app.ports.moveToDb2.subscribe(async id => {
+    const person = await db1.getItem(id);
+
+    if (!person) return;
+
+    await db1.removeItem(id);
+
+    await db2.setItem(id, person);
+
+    app.ports.db1Data.send(await getDb1());
+    app.ports.db2Data.send(await getDb2());
+  });
 })().catch(console.error);
